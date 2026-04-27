@@ -1,12 +1,37 @@
 # MediaShield AI 🛡️
 
+> **Protecting ₹50,000 crore in annual sports broadcast revenue from digital piracy — using multimodal AI.**
 
-
-An AI-powered multi-agent system that **detects**, **tracks**, and **explains** unauthorized usage of digital sports media across platforms.
+[![Google Solution Challenge 2026](https://img.shields.io/badge/Google%20Solution%20Challenge-2026-4285F4?style=for-the-badge&logo=google)](https://promptwars.in/solutionchallenge2026.html)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Next.js](https://img.shields.io/badge/Next.js%2014-000000?style=for-the-badge&logo=next.js)](https://nextjs.org)
+[![Gemini](https://img.shields.io/badge/Gemini%202.0%20Flash-4285F4?style=for-the-badge&logo=google)](https://deepmind.google/technologies/gemini/)
+[![Cloud Run](https://img.shields.io/badge/Google%20Cloud%20Run-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com/run)
 
 ---
 
-## Architecture
+## 🎯 Problem
+
+Sports organizations generate massive volumes of high-value digital media. Official broadcasts are stolen, cropped, watermarked, and redistributed across TikTok, Twitter, and Instagram within minutes — with zero accountability. Existing tools are platform-locked, require pre-embedding, or simply can't scale.
+
+**MediaShield AI detects unauthorized reuse in under 2 seconds — even after cropping, filtering, watermarking, and mirroring.**
+
+---
+
+## 🚀 Live Demo
+
+| Resource | Link |
+|---|---|
+| 🌐 Frontend Dashboard | [mediashield-ai.vercel.app](https://mediashield-ai.vercel.app) |
+| ⚡ Backend API | [Cloud Run URL](https://mediashield-backend-xxx.a.run.app) |
+| 📖 API Docs (Swagger) | [/docs](https://mediashield-backend-xxx.a.run.app/docs) |
+| 🎬 Demo Video (3 min) | [YouTube](https://youtu.be/your-video-id) |
+
+> Replace placeholder URLs with your actual deployed links.
+
+---
+
+## 🏗️ Architecture
 
 ```
 Upload / Query
@@ -18,17 +43,20 @@ Upload / Query
 │  ┌──────────┐  ┌──────────┐  ┌─────────────────────┐  │
 │  │Ingestion │→ │Detection │→ │  Propagation Agent  │  │
 │  │  Agent   │  │  Agent   │  │  (NetworkX Graph)   │  │
-│  │(OpenCLIP)│  │(FAISS+   │  └─────────────────────┘  │
-│  └──────────┘  │SSIM)     │                            │
-│                └──────────┘  ┌─────────────────────┐  │
-│                              │     RAG Agent        │  │
-│                              │ (sentence-xformers + │  │
-│                              │  Gemini 1.5 Flash)   │  │
+│  │(OpenCLIP)│  │(FAISS +  │  └─────────────────────┘  │
+│  └──────────┘  │  SSIM)   │  ┌─────────────────────┐  │
+│                └──────────┘  │     RAG Agent        │  │
+│                              │ (MiniLM + Gemini     │  │
+│                              │  1.5 Flash)          │  │
 │                              └─────────────────────┘  │
 │                              ┌─────────────────────┐  │
 │                              │ Explainability Agent │  │
-│                              │  (Gemini 2.0 Flash   │  │
-│                              │   Vision + OpenCV)   │  │
+│                              │ (Gemini 2.0 Flash    │  │
+│                              │  Vision + OpenCV)    │  │
+│                              └─────────────────────┘  │
+│                              ┌─────────────────────┐  │
+│                              │    Legal Agent       │  │
+│                              │  (ReportLab PDF)     │  │
 │                              └─────────────────────┘  │
 │                                                         │
 │  ┌──────────────────────┐  ┌───────────────────────┐  │
@@ -44,253 +72,96 @@ Next.js 14 Frontend (Vercel)
 
 ---
 
-## Tech Stack
+## ⚙️ Tech Stack
 
 | Layer | Technology |
 |---|---|
 | Image Embeddings | OpenCLIP ViT-B-32 |
 | Text Embeddings | sentence-transformers (all-MiniLM-L6-v2) |
 | Vector Search | FAISS (CPU, dual index) |
-| LLM | Gemini 2.0 Flash Vision (explainability) + Gemini 1.5 Flash (RAG, ingestion context) |
+| LLM | Gemini 2.0 Flash Vision (explainability) + Gemini 1.5 Flash (RAG + ingestion) |
 | Similarity Scoring | Cosine (CLIP) × 0.7 + SSIM × 0.3 |
 | Propagation Graph | NetworkX |
-| Heatmaps | OpenCV (difference saliency) |
+| Heatmaps | OpenCV (difference saliency + JET colormap) |
+| Legal Reports | ReportLab PDF |
 | Backend | FastAPI + Uvicorn |
 | Frontend | Next.js 14 + Tailwind CSS + D3.js |
 | Deployment | Google Cloud Run + Vercel |
+| Optional Storage | Firebase Firestore |
 
 ---
 
-## Local Setup
+## 🔬 How It Works
 
-### Prerequisites
-- Python 3.11+
-- Node.js 18+
-- Git
-
-### 1. Clone & Setup Backend
-
-```bash
-cd mediashield/backend
-
-# Create virtual environment (recommended)
-python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# macOS/Linux:
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure API key
-cp .env.example .env
-# Edit .env and set: GEMINI_API_KEY=your_key_here
-```
-
-### 2. Generate Sample Dataset
-
-```bash
-# From backend/ directory (with venv active)
-python data/generate_dataset.py
-```
-
-This generates:
-- 20 original sports images
-- 60 modified variants (crop / blur / color-shift)
-- FAISS indexes for media + RAG
-- Propagation graph JSON
-
-### 3. Start Backend
-
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-Backend runs at **http://localhost:8000**  
-API docs at **http://localhost:8000/docs**
-
-### 4. Setup & Start Frontend
-
-```bash
-cd mediashield/frontend
-
-# Install dependencies
-npm install
-
-# Start dev server
-npm run dev
-```
-
-Frontend runs at **http://localhost:3000**
-
----
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check + index sizes |
-| `POST` | `/upload` | Ingest media, return `media_id` |
-| `POST` | `/analyze` | Full pipeline: upload → detect → explain |
-| `GET` | `/results` | List all detections (filterable) |
-| `GET` | `/graph` | Propagation graph JSON for D3.js |
-| `POST` | `/query` | RAG query → Gemini answer |
-| `GET` | `/explain/{media_id}` | Heatmap + text explanation |
-| `GET` | `/heatmap/{media_id}` | Heatmap image file |
-| `GET` | `/legal-report/{media_id}` | Generate + download PDF legal evidence report |
-| `GET` | `/stats` | Summary statistics |
-
-`/upload` and `/analyze` support both image and video files. Videos are embedded by sampling one frame per second and average-pooling CLIP vectors.
-
----
-
-## Similarity Scoring
-
+### Similarity Scoring
 ```
 final_score = 0.7 × CLIP_cosine + 0.3 × SSIM
 
-> 0.85  →  HIGH risk  🔴
-0.70–0.85 →  MEDIUM risk 🟡
-< 0.70  →  LOW risk   🟢
+> 0.85   →  🔴 HIGH risk
+0.70–0.85 →  🟡 MEDIUM risk
+< 0.70   →  🟢 LOW risk
 ```
 
+### Detection Pipeline
+1. **Ingest** — Rights holder uploads official media. OpenCLIP generates 512-dim fingerprint. Gemini Vision creates content description.
+2. **Detect** — Suspected pirated media submitted. FAISS finds nearest matches. SSIM validates structural similarity.
+3. **Explain** — Gemini 2.0 Flash Vision compares original vs pirated side-by-side. Describes exactly what changed (crop, filter, watermark, mirror).
+4. **Evidence** — ReportLab generates DMCA-ready PDF with scores, heatmap, and forensic analysis.
+5. **Track** — NetworkX propagation graph maps how content spreads across platforms.
+6. **Insights** — RAG pipeline lets rights holders query their detection database in plain English.
 
-
-### 🚀 Frontend → Vercel (Primary)
-
-**Via Vercel Dashboard (recommended):**
-1. Go to [vercel.com](https://vercel.com) → **New Project** → Import `MediasheildAI` from GitHub.
-2. Set **Root Directory** to `mediashield/frontend`.
-3. Add environment variable in Vercel dashboard:
-   ```
-   NEXT_PUBLIC_BACKEND_URL = https://YOUR_CLOUD_RUN_URL
-   ```
-4. Click **Deploy** — Vercel auto-detects Next.js and builds it.
-
-**Via CLI:**
-```bash
-cd mediashield/frontend
-npm install -g vercel
-vercel --prod
-```
+### Video Support
+Videos are embedded by sampling 1 frame per second → running each frame through OpenCLIP → average-pooling all frame vectors into a single 512-dim fingerprint. A 90-second pirated highlight clip is detected with the same pipeline as images.
 
 ---
 
-### ☁️ Backend → Google Cloud Run (Primary)
-
-```bash
-# Authenticate
-gcloud auth login
-gcloud config set project YOUR_PROJECT_ID
-
-# Build & deploy
-cd mediashield/backend
-gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/mediashield-backend
-
-gcloud run deploy mediashield-backend \
-  --image gcr.io/YOUR_PROJECT_ID/mediashield-backend \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --port 8080 \
-  --memory 2Gi \
-  --cpu 2 \
-  --set-env-vars GEMINI_API_KEY=YOUR_GEMINI_API_KEY,CORS_ORIGINS=https://your-app.vercel.app
-```
-
-**Or with Cloud Build CI/CD** (uses `cloudbuild.yaml`):
-```bash
-gcloud builds submit --config cloudbuild.yaml \
-  --substitutions _GEMINI_API_KEY=YOUR_GEMINI_API_KEY
-```
-
----
-
-### Alternative Backends
-
-**Render** — one-click deploy using `render.yaml`:
-1. Push repo to GitHub (`https://github.com/Hema6-ai/MediasheildAI`).
-2. In Render, create a **Blueprint** and select this repo.
-3. Set `GEMINI_API_KEY` and `CORS_ORIGINS=https://your-app.vercel.app`.
-
-**Railway:**
-1. Create a new Railway project from this repo, set root directory to `backend`.
-2. Add env vars: `GEMINI_API_KEY`, `CORS_ORIGINS`.
-
----
-
-### Local Docker Compose
-
-```bash
-# From mediashield/ root
-cp backend/.env.example backend/.env
-# Edit backend/.env to add your GEMINI_API_KEY
-
-docker-compose up --build
-# Backend: http://localhost:8000  Frontend: http://localhost:3000
-```
-
-## Production Checklist
-
-- Backend environment variables set: `GEMINI_API_KEY` (optional), `CORS_ORIGINS` (set to your frontend domain in production).
-- Backend bootstrap behavior: `AUTO_BOOTSTRAP_DATASET=true` auto-generates baseline dataset on first startup if detections/indexes are missing.
-- Frontend environment variable set: `NEXT_PUBLIC_BACKEND_URL` (public URL of backend API).
-- Generate baseline dataset once after first backend deployment by running `python data/generate_dataset.py`.
-- Verify API health endpoint: `GET /health` returns status ok and non-failing index reads.
-- Verify end-to-end flow in UI: upload image/video -> analyze -> see matches, explanation, and graph data.
-- Validate CORS by calling backend from deployed frontend domain only.
-- Keep dependencies current (frontend now uses patched `next@15.5.15` line and matching `eslint-config-next`).
-
----
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 mediashield/
 ├── backend/
-│   ├── main.py                    # FastAPI app, all 10 routes
+│   ├── main.py                     # FastAPI app — all 10 routes
 │   ├── agents/
-│   │   ├── ingestion_agent.py     # Upload + CLIP embed + Gemini Vision context
-│   │   ├── detection_agent.py     # FAISS search + SSIM scoring
-│   │   ├── propagation_agent.py   # NetworkX graph builder
-│   │   ├── rag_agent.py           # RAG pipeline + Gemini 1.5 Flash
-│   │   ├── explainability_agent.py# Gemini 2.0 Flash Vision dual-image + OpenCV heatmaps
-│   │   ├── legal_agent.py         # ReportLab PDF legal evidence report
-│   │   └── orchestrator.py        # Chains all 6 agents
+│   │   ├── ingestion_agent.py      # Upload + CLIP embed + Gemini Vision context
+│   │   ├── detection_agent.py      # FAISS search + SSIM scoring
+│   │   ├── propagation_agent.py    # NetworkX graph builder
+│   │   ├── rag_agent.py            # RAG pipeline + Gemini 1.5 Flash
+│   │   ├── explainability_agent.py # Gemini 2.0 Flash Vision dual-image + OpenCV heatmaps
+│   │   ├── legal_agent.py          # ReportLab PDF legal evidence report
+│   │   └── orchestrator.py         # Chains all 6 agents
 │   ├── db/
-│   │   ├── faiss_store.py         # Dual FAISS index wrapper
-│   │   ├── firebase_store.py      # Firebase Firestore integration (optional)
-│   │   └── models.py              # Pydantic models
+│   │   ├── faiss_store.py          # Dual FAISS index wrapper
+│   │   ├── firebase_store.py       # Firebase Firestore (optional)
+│   │   └── models.py               # Pydantic models
 │   ├── data/
-│   │   ├── generate_dataset.py    # Synthetic dataset generator
-│   │   ├── detections.json        # Detection metadata store
-│   │   ├── graph.json             # Cached propagation graph
-│   │   ├── media/                 # Original + synthetic images
-│   │   ├── uploads/               # Temp files from /upload and /analyze
-│   │   ├── heatmaps/              # Generated OpenCV heatmap JPEGs
-│   │   ├── indices/               # FAISS .index + _meta.json files
-│   │   └── reports/               # Generated PDF legal reports
+│   │   ├── generate_dataset.py     # Synthetic dataset generator (20 originals + 60 variants)
+│   │   ├── detections.json         # Detection metadata store
+│   │   ├── graph.json              # Cached propagation graph
+│   │   ├── media/                  # Original + synthetic images
+│   │   ├── uploads/                # Temp files from /upload and /analyze
+│   │   ├── heatmaps/               # Generated OpenCV heatmap JPEGs
+│   │   ├── indices/                # FAISS .index + _meta.json files
+│   │   └── reports/                # Generated PDF legal reports
 │   ├── utils/
-│   │   └── similarity.py          # Cosine + SSIM helpers
+│   │   └── similarity.py           # Cosine + SSIM helpers
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   └── .env.example
 ├── frontend/
 │   ├── app/
-│   │   ├── page.tsx               # Landing page (pitch hero + feature cards)
-│   │   ├── dashboard/page.tsx     # Upload + analyze + live stats
-│   │   ├── detection/page.tsx     # Results table + filters + legal PDF download
-│   │   ├── graph/page.tsx         # D3.js propagation graph
-│   │   └── insights/page.tsx      # RAG chat panel (Gemini powered)
+│   │   ├── page.tsx                # Landing page — pitch hero + feature cards
+│   │   ├── dashboard/page.tsx      # Upload + analyze + live stats
+│   │   ├── detection/page.tsx      # Results table + filters + legal PDF download
+│   │   ├── graph/page.tsx          # D3.js propagation graph
+│   │   └── insights/page.tsx       # RAG chat panel
 │   ├── components/
-│   │   ├── MediaUpload.tsx        # Drag-and-drop + platform selector
-│   │   ├── DetectionCard.tsx      # Match card with CLIP/SSIM bars + heatmap
-│   │   ├── PropagationGraph.tsx   # D3.js force-directed graph
-│   │   ├── InsightChat.tsx        # RAG chat UI with suggested questions
-│   │   ├── Navbar.tsx             # Sticky glassmorphism nav
-│   │   └── RiskBadge.tsx          # HIGH/MEDIUM/LOW pill badge
-│   ├── lib/api.ts                 # All typed API calls incl. legalReportUrl()
+│   │   ├── MediaUpload.tsx         # Drag-and-drop + platform selector
+│   │   ├── DetectionCard.tsx       # Match card with CLIP/SSIM bars + heatmap
+│   │   ├── PropagationGraph.tsx    # D3.js force-directed graph
+│   │   ├── InsightChat.tsx         # RAG chat UI + suggested questions
+│   │   ├── Navbar.tsx              # Sticky glassmorphism nav
+│   │   └── RiskBadge.tsx           # HIGH/MEDIUM/LOW pill badge
+│   ├── lib/api.ts                  # All typed API calls incl. legalReportUrl()
 │   ├── vercel.json
 │   └── package.json
 ├── docker-compose.yml
@@ -299,86 +170,189 @@ mediashield/
 
 ---
 
-## Environment Variables
+## 🛠️ Local Setup
+
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
+- Git
+
+### 1. Clone
+
+```bash
+git clone https://github.com/Hema6-ai/MediasheildAI.git
+cd MediasheildAI
+```
+
+### 2. Backend
+
+```bash
+cd mediashield/backend
+
+python -m venv .venv
+# Windows:
+.venv\Scripts\activate
+# macOS/Linux:
+source .venv/bin/activate
+
+pip install -r requirements.txt
+
+cp .env.example .env
+# Edit .env → set GEMINI_API_KEY=your_key_here
+```
+
+### 3. Generate Dataset
+
+```bash
+python data/generate_dataset.py
+```
+
+Generates 20 original sports images + 60 modified variants (crop / blur / color-shift), FAISS indexes, and propagation graph JSON.
+
+### 4. Start Backend
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+- API: `http://localhost:8000`
+- Swagger docs: `http://localhost:8000/docs`
+
+### 5. Frontend
+
+```bash
+cd mediashield/frontend
+npm install
+npm run dev
+```
+
+Frontend: `http://localhost:3000`
+
+### Docker (Full Stack)
+
+```bash
+cp backend/.env.example backend/.env
+# Add GEMINI_API_KEY to backend/.env
+docker-compose up --build
+```
+
+---
+
+## 📡 API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/health` | Health check + index sizes |
+| `POST` | `/upload` | Ingest media → returns `media_id` |
+| `POST` | `/analyze` | Full 6-agent pipeline: upload → detect → explain |
+| `GET` | `/results` | List all detections (filterable by platform/risk) |
+| `GET` | `/graph` | Propagation graph JSON for D3.js |
+| `POST` | `/query` | RAG query → Gemini answer |
+| `GET` | `/explain/{media_id}` | Heatmap + Gemini forensic explanation |
+| `GET` | `/heatmap/{media_id}` | Heatmap image file |
+| `GET` | `/legal-report/{media_id}` | Generate + download PDF evidence report |
+| `GET` | `/stats` | Summary statistics |
+
+Both `/upload` and `/analyze` accept images and videos (`.mp4`, `.mov`, `.avi`, `.mkv`, `.webm`, `.m4v`).
+
+---
+
+## 🚀 Deployment
+
+### Backend → Google Cloud Run
+
+```bash
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+
+cd mediashield/backend
+gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/mediashield-backend
+
+gcloud run deploy mediashield-backend \
+  --image gcr.io/YOUR_PROJECT_ID/mediashield-backend \
+  --platform managed \
+  --region asia-south1 \
+  --allow-unauthenticated \
+  --port 8080 \
+  --memory 2Gi \
+  --cpu 2 \
+  --set-env-vars GEMINI_API_KEY=YOUR_KEY,AUTO_BOOTSTRAP_DATASET=true,CORS_ORIGINS=https://your-app.vercel.app
+```
+
+Or with Cloud Build CI/CD:
+```bash
+gcloud builds submit --config cloudbuild.yaml \
+  --substitutions _GEMINI_API_KEY=YOUR_KEY
+```
+
+### Frontend → Vercel
+
+```bash
+cd mediashield/frontend
+npx vercel --prod
+```
+
+Set `NEXT_PUBLIC_BACKEND_URL` to your Cloud Run URL in the Vercel dashboard.
+
+### Alternative: Render
+
+Push to GitHub → create Blueprint from `render.yaml` → set `GEMINI_API_KEY` + `CORS_ORIGINS`.
+
+---
+
+## 🌍 Environment Variables
 
 **Backend (`backend/.env`)**
-```
-GEMINI_API_KEY=your_gemini_api_key_here          # Enables Gemini Vision + RAG + ingestion context
-CORS_ORIGINS=https://your-frontend.vercel.app    # Comma-separated; defaults to * in dev
-AUTO_BOOTSTRAP_DATASET=true                      # Auto-generate dataset on first startup
-FIREBASE_SERVICE_ACCOUNT_PATH=                   # Optional: path to Firebase service account JSON
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+CORS_ORIGINS=https://your-frontend.vercel.app
+AUTO_BOOTSTRAP_DATASET=true
+FIREBASE_SERVICE_ACCOUNT_PATH=          # optional
 ```
 
 **Frontend (`frontend/.env.local`)**
-```
+```env
 NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 ```
 
 ---
 
-## Enhancements 
+## ✅ Production Checklist
 
-### 1. 🔍 Gemini Vision — Dual-Image Explainability
-**File:** `agents/explainability_agent.py`
+- [ ] `GEMINI_API_KEY` set in Cloud Run environment
+- [ ] `CORS_ORIGINS` set to your Vercel domain
+- [ ] `AUTO_BOOTSTRAP_DATASET=true` for first startup
+- [ ] `NEXT_PUBLIC_BACKEND_URL` set to Cloud Run URL in Vercel
+- [ ] `GET /health` returns `{"status": "ok"}`
+- [ ] End-to-end flow verified: upload → analyze → detection card → legal report PDF
 
-The explainability agent now sends **both** the original broadcast image and the suspected pirated version to **Gemini 2.0 Flash Vision** for side-by-side forensic comparison. Instead of reciting numbers, it describes exactly what changed:
+---
 
-> *"Match detected because the original broadcast frame showing a football penalty kick was cropped to remove stadium branding and overlaid with a TikTok watermark, while core player positioning and field structure remain identical."
+## ✨ Key Features
 
-**Fallback chain:** Gemini Vision → Gemini 1.5 Flash (text-only) → rule-based template.
+### 🔍 Transformation-Resilient Detection
+Detects pirated content even after aggressive modifications — cropping, color filtering, watermarking, mirroring, and resolution degradation. CLIP semantic embeddings capture *what* the content is, not just *how it looks*.
 
-### 2. 📄 Legal Evidence PDF Reports
-**Files:** `agents/legal_agent.py`, `main.py` (`GET /legal-report/{media_id}`)
+### 🤖 Gemini Vision Forensic Explainability
+Sends both the original and suspected pirated images to Gemini 2.0 Flash Vision for side-by-side forensic comparison. Generates human-readable explanations like:
+> *"Match detected because the original broadcast frame showing a football penalty kick was cropped to remove stadium branding and overlaid with a TikTok watermark, while core player positioning and field structure remain identical."*
 
-One-click PDF generation using ReportLab. Each report contains:
-- Detection summary table (Media ID, date, platform, risk level, views, revenue loss estimate)
-- AI Explainability Analysis (Gemini-generated forensic text)
-- Visual Evidence section (embedded similarity heatmap image)
-- Official legal disclaimer footer
+Fallback chain: Gemini Vision → Gemini 1.5 Flash (text-only) → rule-based template.
 
-Download button visible in the Detections page detail panel for every flagged item.
+### 📄 One-Click Legal Evidence Reports
+ReportLab PDF containing: detection summary, similarity scores, AI forensic analysis, OpenCV heatmap, revenue loss estimate, and legal disclaimer. Ready to submit as a DMCA Section 512 takedown notice.
 
-### 3. 🎥 Video File Support
-**File:** `agents/ingestion_agent.py`
+### 🎥 Video Support
+MP4, MOV, AVI, MKV, WebM — processed via 1 FPS sampling + average-pool CLIP embeddings.
 
-Both `/upload` and `/analyze` accept video files (`.mp4`, `.mov`, `.avi`, `.mkv`, `.webm`, `.m4v`). Videos are processed by:
-1. Sampling 1 frame per second with OpenCV
-2. Running each frame through OpenCLIP ViT-B-32
-3. Average-pooling all frame embeddings into a single 512-dim vector
+### 🌐 Propagation Graph
+NetworkX + D3.js force-directed graph showing how pirated content spreads across platforms. Drag, zoom, hover tooltips, color-coded by risk level.
 
-This means a 90-second pirated highlight clip is compared against the indexed library with the same pipeline as images.
-
-### 4. 🤖 Gemini Vision in Ingestion
-**File:** `agents/ingestion_agent.py` → `analyze_media_with_gemini()`
-
-On every upload, Gemini 1.5 Flash Vision analyzes the media and generates a 1-2 sentence content description (e.g., "Football match showing a penalty kick by player #10 in a stadium"). Stored as `ai_context` in the detection record — queryable via the RAG agent.
-
-### 5. 🔥 Firebase Firestore Integration
-**File:** `db/firebase_store.py`
-
-Optional scalable metadata store. When `FIREBASE_SERVICE_ACCOUNT_PATH` is set:
-- Detections are written to a `detections` Firestore collection
-- Reads fall back to local JSON if Firebase is unavailable
-
-Allows horizontal scaling across multiple backend instances without shared filesystem.
-
-### 6. 🧠 RAG + Gemini Q&A Insights
-**File:** `agents/rag_agent.py`
-
-Natural-language Q&A over your detection database powered by sentence-transformers (retrieval) and Gemini 1.5 Flash (generation). Ask questions like:
+### 🧠 RAG Insights Chat
+Ask plain-English questions over your detection database:
 - *"Which platform has the most violations?"*
-- *"What is the total estimated revenue loss?"*
-- *"How many high-risk NBA clips were detected today?"*
+- *"What is the total estimated revenue loss this week?"*
+- *"How many high-risk football clips were detected today?"*
 
-Full chat UI at `/insights` with suggested questions and context snippet disclosure.
-
-### 7. 🌐 Premium UI/UX
-**Files:** `frontend/app/globals.css`, all page and component files
-
-- Dark glassmorphism design (`backdrop-filter: blur`)
-- 3D tilt-card hover effects (`perspective(1200px) rotateX/Y`)
-- Animated gradient hero with isometric mockup
-- D3.js force-directed propagation graph (drag, zoom, hover tooltips)
-- Risk-colored score bars (CLIP cyan, SSIM purple)
-- Pitch hook: *"₹50,000 crore of sports broadcast revenue lost annually"*
+Powered by sentence-transformers retrieval + Gemini 1.5 Flash generation.
 
