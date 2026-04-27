@@ -1,6 +1,6 @@
 # MediaShield AI 🛡️
 
-> **Google Solution Challenge 2026** — AI-Powered Sports Media Protection
+
 
 An AI-powered multi-agent system that **detects**, **tracks**, and **explains** unauthorized usage of digital sports media across platforms.
 
