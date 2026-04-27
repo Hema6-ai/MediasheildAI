@@ -16,18 +16,6 @@ Sports organizations generate massive volumes of high-value digital media. Offic
 
 **MediaShield AI detects unauthorized reuse in under 2 seconds — even after cropping, filtering, watermarking, and mirroring.**
 
----
-
-## 🚀 Live Demo
-
-| Resource | Link |
-|---|---|
-| 🌐 Frontend Dashboard | [mediashield-ai.vercel.app](https://mediashield-ai.vercel.app) |
-| ⚡ Backend API | [Cloud Run URL](https://mediashield-backend-xxx.a.run.app) |
-| 📖 API Docs (Swagger) | [/docs](https://mediashield-backend-xxx.a.run.app/docs) |
-| 🎬 Demo Video (3 min) | [YouTube](https://youtu.be/your-video-id) |
-
-> Replace placeholder URLs with your actual deployed links.
 
 ---
 
