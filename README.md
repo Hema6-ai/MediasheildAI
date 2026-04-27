@@ -316,9 +316,7 @@ NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 
 ---
 
-## Enhancements (Hackathon Finals)
-
-All upgrades made during the Grand Finale preparation:
+## Enhancements 
 
 ### 1. 🔍 Gemini Vision — Dual-Image Explainability
 **File:** `agents/explainability_agent.py`
