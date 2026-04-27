@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: mediashield-backend
+    runtime: docker
+    plan: starter
+    rootDir: backend
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "*"
