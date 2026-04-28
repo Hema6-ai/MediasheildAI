@@ -3,7 +3,8 @@ services:
     name: mediashield-backend
     runtime: docker
     plan: starter
-    rootDir: backend
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     envVars:
       - key: GEMINI_API_KEY
         sync: false
@@ -11,7 +12,3 @@ services:
         value: "https://mediasheild-ai.vercel.app"
       - key: PORT
         value: "8080"
-    disk:
-      name: mediashield-data
-      mountPath: /app/data
-      sizeGB: 1
